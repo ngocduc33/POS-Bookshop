@@ -1,0 +1,322 @@
+﻿<UserControl x:Class="MyShop.Categories.CategoryScreen"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:local="clr-namespace:MyShop.Categories"
+             xmlns:DataIndex="clr-namespace:MyShop"
+             mc:Ignorable="d" 
+             d:DesignHeight="720" d:DesignWidth="1100">
+    <UserControl.Resources>
+        <DataIndex:CurrentRowIndexConverter x:Key="currentRow"/>
+    </UserControl.Resources>
+    <Grid x:Name="categoriesScreen">
+        <Grid Background="#FFFAFAFA">
+            <Grid.RowDefinitions>
+
+                <!--Tiêu đề-->
+                <RowDefinition Height="1.5*"/>
+
+                <!--Body-->
+                <RowDefinition Height="7*"/>
+
+                <!--Text box-->
+                <RowDefinition Height="3*"/>
+
+                <!--Chức năng-->
+                <RowDefinition Height="1.5*"/>
+
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <!--Tiêu đề-->
+            <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
+                   Margin="0 10 0 0 "
+                   Content="CATEGORIES" 
+                   FontFamily="Sitka Subheading"
+                   FontSize="30"
+                   Padding="0"
+                   FontWeight="Bold"
+                   VerticalAlignment="Top"
+                   HorizontalAlignment="Center"/>
+
+            <!--Nút backward-->
+            <Button HorizontalAlignment="Left"
+                    Background="Transparent"
+                    BorderBrush="#303030"
+                    VerticalAlignment="Top"
+                    Height="30" Width="30"
+                    Click="backWard_Click"
+                    Style="{StaticResource MaterialDesignIconForegroundButton}"
+                    Margin="10 5 0 0">
+                <materialDesign:PackIcon Kind="KeyboardArrowLeft"
+                                          Height="30"
+                                          Width="30" />
+            </Button>
+
+            <!--Danh sách loại sản phẩm-->
+            <ListView Name="listCategories" 
+                      Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                      FontFamily="Sitka Subheading"
+                      FontSize="13"
+                      Margin="10,0,0,0"
+                      Foreground="Black"
+                      SelectionChanged="ListCategories_SelectionChanged">
+
+                <!--Nếu dài quá thì hiển thị...-->
+                <ListView.Resources>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+                        <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=Text}"/>
+                    </Style>
+                    <Style TargetType="{x:Type ScrollBar}">
+                        <Setter Property="Margin" Value="2,50,0,8" />
+                        <Setter Property="Stylus.IsFlicksEnabled" Value="false" />
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type ScrollBar}">
+                                    <Track IsDirectionReversed="true" Focusable="false">
+                                        <Track.Thumb>
+                                            <Thumb Width="8" Background="#21bf73"/>
+                                        </Track.Thumb>
+                                        <Track.IncreaseRepeatButton>
+                                            <RepeatButton Command="ScrollBar.PageDownCommand" Opacity="0" Focusable="false" />
+                                        </Track.IncreaseRepeatButton>
+                                        <Track.DecreaseRepeatButton>
+                                            <RepeatButton Command="ScrollBar.PageUpCommand" Opacity="0" Focusable="false" />
+                                        </Track.DecreaseRepeatButton>
+                                    </Track>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListView.Resources>
+
+                <!--Thiết kế các cột-->
+                <ListView.View>
+                    <GridView>
+
+                        <!--Cột mã loại-->
+                        <GridViewColumn Width="100">
+                            <GridViewColumn.HeaderTemplate>
+                                <DataTemplate>
+                                    <Border>
+                                        <Border.Effect>
+                                            <DropShadowEffect Color="White"
+                                                              Direction="270"
+                                                              ShadowDepth="1"
+                                                              BlurRadius="5"/>
+                                        </Border.Effect>
+                                        <Label Content="ID"
+                                               Padding="1"
+                                               FontSize="20"
+                                               Foreground="Black"
+                                               FontWeight="Bold"/>
+                                    </Border>
+                                </DataTemplate>
+                            </GridViewColumn.HeaderTemplate>
+
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Category_Id}" TextAlignment="Justify" FontSize="16" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
+                        <!--Cột Tên loại-->
+                        <GridViewColumn Width="250">
+                            <GridViewColumn.HeaderTemplate>
+                                <DataTemplate>
+                                    <Border>
+                                        <Border.Effect>
+                                            <DropShadowEffect Color="White"
+                                                              Direction="270"
+                                                              ShadowDepth="1"
+                                                              BlurRadius="5"/>
+                                        </Border.Effect>
+                                        <Label Content="Category name"
+                                               Padding="1"
+                                               FontSize="20"
+                                               Foreground="Black"
+                                               FontWeight="Bold"/>
+                                    </Border>
+                                </DataTemplate>
+                            </GridViewColumn.HeaderTemplate>
+
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Category_Name}" 
+                                               TextAlignment="Justify"
+                                               FontSize="16" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
+                        <!--Cột mô tả-->
+                        <GridViewColumn Width="auto">
+                            <GridViewColumn.HeaderTemplate>
+                                <DataTemplate>
+                                    <Border>
+                                        <Border.Effect>
+                                            <DropShadowEffect Color="White"
+                                                              Direction="270"
+                                                              ShadowDepth="1"
+                                                              BlurRadius="5"/>
+                                        </Border.Effect>
+                                        <Label Content="Description"
+                                               Padding="1"
+                                               FontSize="20"
+                                               Foreground="Black"
+                                               FontWeight="Bold"/>
+                                    </Border>
+                                </DataTemplate>
+                            </GridViewColumn.HeaderTemplate>
+
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Description}" 
+                                               TextAlignment="Justify" 
+                                               FontSize="16"
+                                               />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+
+            <Grid Grid.Row="2" Grid.Column="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <!--Mã loại sản phẩm-->
+                <TextBox Grid.Column="0"
+                         Margin="15,30,15,0"
+                         materialDesign:HintAssist.Hint="ID"
+                         FontSize="18"
+                         Background="Transparent"
+                         FontFamily="Sitka Subheading"
+                         FontWeight="Bold"
+                         VerticalAlignment="Top"
+                         IsEnabled="False"
+                         Padding="1 -5 0 -2"
+                         materialDesign:HintAssist.FloatingOffset="0,-25"
+                         materialDesign:HintAssist.FloatingScale=".95"
+                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                         Name="categoryIdTextBox"/>
+
+                <!--Tên loại sản phẩm-->
+                <TextBox Grid.Column="1"
+                         Margin="15,30,15,0"
+                         materialDesign:HintAssist.Hint="Category name"
+                         FontSize="18"
+                         Background="Transparent"
+                         FontFamily="Sitka Subheading"
+                         FontWeight="Bold"
+                         VerticalAlignment="Top"
+                         IsEnabled="False"
+                         Padding="1 -5 0 -2"
+                         materialDesign:HintAssist.FloatingOffset="0,-25"
+                         materialDesign:HintAssist.FloatingScale=".95"
+                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                         Name="categoryNameTextBox"/>
+            </Grid>
+
+            <!--Mô tả loại sản phẩm-->
+            <TextBox Grid.Row="2" Grid.Column="0"
+                     Margin="15,90,15,20"
+                     FontSize="18"
+                     FontFamily="Sitka Subheading"
+                     AcceptsReturn="True"
+                     TextWrapping="Wrap"
+                     TextAlignment="Left"
+                     FontWeight="Bold"
+                     VerticalAlignment="Center"
+                     VerticalScrollBarVisibility="Auto"
+                     IsEnabled="False"
+                     Padding="1 -5 0 -2"
+                     materialDesign:HintAssist.FloatingOffset="0,-25"
+                     materialDesign:HintAssist.FloatingScale=".95"
+                     materialDesign:HintAssist.Hint="Description"
+                     Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                     Name="categoryDescriptionTextBox">
+            </TextBox>
+
+            <!--Button thêm mới-->
+            <Button Grid.Row="3" Grid.Column="1"
+                    Width="80" Content="Add"
+                    FontWeight="Bold"
+                    Foreground="White"
+                    FontSize="15"
+                    Margin="0,0,250,20"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Background="#5ea7ff"
+                    BorderBrush="#187cf5"
+                    FontFamily="Sitka Subheading"
+                    Style="{StaticResource MaterialDesignRaisedButton}"
+                    Click="BtnAddCategory_Click"
+                    Name="btnAddCategory">
+            </Button>
+
+            <!--Button sửa-->
+            <Button Grid.Row="3"  Grid.Column="1"
+                    Width="80" Content="Edit"
+                    FontWeight="Bold"
+                    Foreground="White"
+                    FontSize="15"
+                    Margin="0,0,130,20"
+                    VerticalAlignment="Top"
+                    HorizontalAlignment="Right"
+                    Background="#5ea7ff"
+                    BorderBrush="#187cf5"
+                    FontFamily="Sitka Subheading"
+                    IsEnabled="False"
+                    Style="{StaticResource MaterialDesignRaisedButton}"
+                    Click="BtnUpdateCategory_Click"
+                    Name="btnUpdateCategory">
+            </Button>
+
+            <!--Button xóa-->
+            <Button Grid.Row="3" Grid.Column="1"
+                    Width="80" Content="Delete"
+                    FontWeight="Bold"
+                    Foreground="White"
+                    FontSize="15"
+                    Margin="0,0,15,20"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Background="#5ea7ff"
+                    BorderBrush="#187cf5"
+                    FontFamily="Sitka Subheading"
+                    IsEnabled="False"
+                    Style="{StaticResource MaterialDesignRaisedButton}"
+                    Click="BtnDeleteCategory_Click"
+                    Name="btnDeleteCategory">
+            </Button>
+
+            <!--Progressbar loading-->
+            <ProgressBar Grid.Row="1" Grid.ColumnSpan="2"
+                     Width="35" Height="35"
+                     Style="{StaticResource MaterialDesignCircularProgressBar}"
+                     x:Name="progressBarLoadCategories">
+                <ProgressBar.Triggers>
+                    <EventTrigger RoutedEvent="Loaded">
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Storyboard.TargetProperty="Value" From="0" To="100" Duration="0:0:1" RepeatBehavior="Forever"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                </ProgressBar.Triggers>
+            </ProgressBar>
+        </Grid>
+    </Grid>
+</UserControl>

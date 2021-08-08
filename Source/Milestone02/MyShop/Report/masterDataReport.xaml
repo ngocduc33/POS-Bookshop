@@ -1,0 +1,300 @@
+﻿<UserControl x:Class="MyShop.Report.masterDataReport"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:local="clr-namespace:MyShop.Products"
+             xmlns:converter="clr-namespace:MyShop"
+             mc:Ignorable="d" 
+             d:DesignHeight="640" d:DesignWidth="1100" Initialized="UserControl_Initialized">
+    <UserControl.Resources>
+        <converter:ByteArrayToImageConverter x:Key="converter"/>
+        <converter:PriceConverter x:Key="priceConverter"/>
+
+        <!--Tăng kích thước item-->
+        <Style x:Key="iconStyle" TargetType="Border">
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Grid.ZIndex" Value="1"/>
+                    <Setter Property="TextBlock.Background" Value="#66000000"/>
+                    <Setter Property="RenderTransform">
+                        <Setter.Value>
+                            <ScaleTransform ScaleX="1.05" ScaleY="1.05" />
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="Grid.Effect">
+                        <Setter.Value>
+                            <DropShadowEffect BlurRadius="15" ShadowDepth="2" Direction="-90" Color="Silver" Opacity="10"/>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+
+        <Style x:Key="ScaleStyle" TargetType="Grid">
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Grid.ZIndex" Value="1"/>
+                    <Setter Property="TextBlock.Background" Value="#66000000"/>
+                    <Setter Property="RenderTransform">
+                        <Setter.Value>
+                            <ScaleTransform ScaleX="1.05" ScaleY="1.05" />
+                        </Setter.Value>
+                    </Setter>
+                    <!--<Setter Property="Grid.Effect">
+                        <Setter.Value>
+                            <DropShadowEffect BlurRadius="20" ShadowDepth="2" Direction="-90" Color="#66000000" Opacity="1"/>
+                        </Setter.Value>
+                    </Setter>-->
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid x:Name="masterReport">
+        <Grid >
+            <Grid.RowDefinitions>
+
+                <!--Title-->
+                <RowDefinition Height="40"/>
+
+                <!--Body-->
+                <RowDefinition Height="*"/>
+
+                <!--Trạng thái-->
+                <RowDefinition Height="30"/>
+            </Grid.RowDefinitions>
+
+
+            <Grid Grid.Row="0" Background="#FFFAFAFA">
+                <Label Grid.Row="0"
+                       Content="MASTER DATA DETAIL" 
+                       FontFamily="Sitka Subheading"
+                       FontSize="30"
+                       Padding="0"
+                       FontWeight="Bold"
+                       VerticalAlignment="Top"
+                       HorizontalAlignment="Center" 
+                   />
+
+                <!--Nút backward-->
+                <Button HorizontalAlignment="Left"
+                        Background="Transparent"
+                        BorderBrush="#303030"
+                        VerticalAlignment="Top"
+                        Height="30" Width="30"
+                        Click="backWard_Click"
+                        Style="{StaticResource MaterialDesignIconForegroundButton}"
+                        Margin="10 5 0 0">
+
+                    <materialDesign:PackIcon Kind="KeyboardArrowLeft"
+                                             Height="30"
+                                             Width="30" />
+                </Button>
+                <Label Content="Back to report"
+                       x:Name="contentBack"
+                       FontSize="13"
+                       Height="20"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Top"
+                       Margin="37 10 0 0"
+                       FontFamily="Sitka Subheading" 
+                       FontStyle="Italic"
+                       Foreground="#FF848585"/>
+            </Grid>
+
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid Grid.Column="1" >
+                    <Grid.RowDefinitions>
+                        <!--control-->
+                        <RowDefinition Height="50"/>
+
+                        <!--Hiển thị danh sách-->
+                        <RowDefinition Height="*"/>
+
+                    </Grid.RowDefinitions>
+
+                    <!--Control-->
+                    <Grid Grid.Row="0" Background="#FFFAFAFA">
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="350"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!--Category-->
+                            <Grid Grid.Column="0">
+
+                                <!--category-->
+                                <ComboBox Name="categoriesComboBox"
+                                          Width="250" Height="30" 
+                                          Padding="10 2 2 2"
+                                          FontSize="15"
+                                          materialDesign:HintAssist.Hint="Category"
+                                          Margin="60,0,0,10"
+                                          FontStyle="Italic"
+                                          FontFamily="Sitka Subheading"
+                                          HorizontalAlignment="Left"
+                                          VerticalAlignment="Bottom"
+                                          VerticalContentAlignment="Center"
+                                          SelectionChanged="categoriesComboBox_SelectionChanged"
+                                          DropDownOpened="ComboProductTypes_DropDownOpened"
+                                          DropDownClosed="ComboProductTypes_DropDownClosed"
+                                          ItemsSource="{Binding LongListToTestComboVirtualization}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <!--<Image Source="{Binding Category_Image}" Width="25" Height="25" RenderOptions.BitmapScalingMode="HighQuality"/>-->
+                                                <TextBlock Foreground="Black" FontWeight="Bold" Text="{Binding Category_Name}" Margin="3 0 0 0"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+
+                            </Grid>
+                            <Grid Grid.Column="1">
+                                <CheckBox Margin="50 0 0 0 " Name="status_Checkbox" Checked="status_CheckedChanged" Unchecked="status_Checkbox_Unchecked" >Sản phẩm sắp hết hàng</CheckBox>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+
+
+                    <!--Sản phẩm-->
+                    <Grid Grid.Row="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="40"/>
+                        </Grid.RowDefinitions>
+
+                        <!--Danh sách sản phẩm-->
+
+                        <Grid Grid.Row="0" Background="White">
+                            <ListView Name="productsListView" 
+                                      ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
+                                      ScrollViewer.VerticalScrollBarVisibility="Disabled" 
+                                      >
+                                <ListView.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <UniformGrid Columns="5" Rows="2">
+                                        </UniformGrid>
+                                    </ItemsPanelTemplate>
+                                </ListView.ItemsPanel>
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Background="White" RenderTransformOrigin="0.5,0.5" 
+                                              Style="{StaticResource ScaleStyle}" 
+                                              VerticalAlignment="Stretch"
+                                              HorizontalAlignment="Stretch">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="7*"/>
+                                                <RowDefinition Height="0.7*"/>
+                                                <RowDefinition Height="0.63*"/>
+                                                <RowDefinition Height="0.63*"/>
+                                            </Grid.RowDefinitions>
+                                            <Image Source="{Binding Thumbnail, 
+                                                    Converter={StaticResource converter}, Mode=OneTime}"
+                                                       RenderOptions.BitmapScalingMode="HighQuality"
+                                                       Stretch="Uniform"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"
+                                                   Grid.Row="0"
+                                                   Margin="0 0 0 1"
+                                                   />
+                                                <TextBlock Text="{Binding ProductName, Mode=OneTime}" 
+                                                           Margin="6 0 0 1"
+                                                           TextAlignment="Left"
+                                                           TextTrimming="CharacterEllipsis" 
+                                                           FontSize="14"
+                                                           FontFamily="Times New Roman" 
+                                                           Grid.Row="1"
+                                                           HorizontalAlignment="Center"/>
+                                            <TextBlock Text="{Binding Price, Converter={StaticResource priceConverter} }" 
+                                                       Margin="6 0 0 0" 
+                                                       TextAlignment="Left"
+                                                       TextTrimming="CharacterEllipsis" 
+                                                       FontSize="17" FontWeight="Bold"
+                                                       FontFamily="Sitka Subheading"
+                                                       Grid.Row="2"
+                                                       HorizontalAlignment="Center"/>
+                                            <TextBlock 
+                                                       Text="{Binding Quantity, Mode=OneTime}"
+                                                       Margin="6 0 0 0" 
+                                                       TextAlignment="Left"
+                                                       TextTrimming="CharacterEllipsis" 
+                                                       FontSize="17" FontWeight="Bold"
+                                                       FontFamily="Sitka Subheading"
+                                                       Grid.Row="3"
+                                                       HorizontalAlignment="Center"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </Grid>
+
+                        <!--Phân trang-->
+                        <Grid Grid.Row="1" Background="White">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <!--Trang trước-->
+                                <Button Background="Transparent"
+                                        BorderBrush="#303030"
+                                        VerticalAlignment="Center"
+                                        Height="30" Width="30"
+                                        Click="PreviousPaging_Click"
+                                        Style="{StaticResource MaterialDesignIconForegroundButton}">
+                                    <materialDesign:PackIcon Kind="KeyboardArrowLeft"
+                                                             Height="30"
+                                                             Width="30" />
+                                </Button>
+
+                                <!--Chỉ số trang hiện tại-->
+                                <ComboBox Name="comboBoxPaging"
+                                          Width="60"
+                                          Height="25"
+                                          Padding="2"
+                                          FontSize="13"
+                                          FontWeight="Bold"
+                                          BorderThickness="0,0,0,0"
+                                          Margin="20 0 20 0"
+                                          FontStyle="Italic"
+                                          FontFamily="Sitka Subheading"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"
+                                          DropDownOpened="ComboProductTypes_DropDownOpened"
+                                          DropDownClosed="ComboProductTypes_DropDownClosed"
+                                          SelectionChanged="ComboPageIndex_SelectionChanged"
+                                          ItemsSource="{Binding LongListToTestComboVirtualization}">
+                                </ComboBox>
+
+                                <!--Trang sau-->
+                                <Button Background="Transparent"
+                                        BorderBrush="#303030"
+                                        Height="30"
+                                        Width="30"
+                                        Click="NextPaging_Click"
+                                        Style="{StaticResource MaterialDesignIconForegroundButton}">
+                                    <materialDesign:PackIcon Kind="KeyboardArrowRight"
+                                                             Height="30"
+                                                             Width="30" />
+                                </Button>
+
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Grid>
+            
+            <StatusBar Grid.ColumnSpan="2" Name="status" Grid.Row="2" Height="30" >
+                <Label Name="statusLabel" Content="Loaded" Padding="0 0 0 2" FontStyle="Italic"/>
+            </StatusBar>
+        </Grid>
+            
+    </Grid>
+</UserControl>

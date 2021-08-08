@@ -1,0 +1,565 @@
+﻿<UserControl x:Class="MyShop.Orders.OrdersScreen"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:converter="clr-namespace:MyShop"
+             xmlns:local="clr-namespace:MyShop.Orders"
+             mc:Ignorable="d" 
+             Initialized="UserControl_Initialized"
+             d:DesignHeight="720" d:DesignWidth="1100">
+    <UserControl.Resources>
+        <converter:PriceConverter x:Key="PriceConverter"/>
+        <converter:DataConverter x:Key="IndexConverter"/>
+        <converter:NullToGuestCustomerConverter x:Key="guestConverter"/>
+    </UserControl.Resources>
+    <Grid x:Name="screenOrders">
+        <Grid Background="#FFFAFAFA">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.4*"/>
+                <RowDefinition Height="0.5*"/>
+                <RowDefinition Height="4*"/>
+                <RowDefinition Height="3*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
+
+            <!--Nút backward-->
+            <Button HorizontalAlignment="Left"
+                        Background="Transparent"
+                        BorderBrush="#303030"
+                        VerticalAlignment="Top"
+                        Height="30" Width="30"
+                        Click="backWard_Click"
+                        Style="{StaticResource MaterialDesignIconForegroundButton}"
+                        Margin="10 5 0 0">
+
+                <materialDesign:PackIcon Kind="KeyboardArrowLeft"
+                                             Height="30"
+                                             Width="30" />
+            </Button>
+
+            <Button Content="New create order"
+                    Name="Create_Order"
+                   FontSize="13"
+                   Height="20"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Top"
+                   Margin="130,10,0,0"
+                   FontFamily="Sitka Subheading" 
+                   FontStyle="Italic"
+                   Click="Create_Order_Click"
+                   Background="Gray"
+                   Foreground="White" Grid.Column="3"/>
+
+            <Label Grid.ColumnSpan="4"
+                   Content="LIST ORDERS"
+                   FontSize="25"
+                   Padding="0"
+                   FontWeight="Bold"
+                   FontFamily="Sitka Subheading"
+                   HorizontalAlignment="Center"/>
+
+            <!--Từ ngày-->
+            <DatePicker Grid.Row="1" Grid.Column="0"
+                        VerticalAlignment="Bottom"
+                        Margin="10 0 10 0"
+                        FontSize="15"
+                        FontFamily="Sitka Subheading"
+                        FontWeight="Bold"
+                        materialDesign:HintAssist.Hint="From date"
+                        Style="{StaticResource MaterialDesignFloatingHintDatePicker}"
+                        Name="fromDayDatePicker"
+                        SelectedDateChanged="fromDayDatePicker_SelectedDateChanged">
+            </DatePicker>
+
+            <!--Đến ngày-->
+            <DatePicker Grid.Row="1" Grid.Column="1"
+                        VerticalAlignment="Bottom"
+                        Margin="10 0 10 0"
+                        FontSize="15"
+                        FontFamily="Sitka Subheading"
+                        FontWeight="Bold"
+                        materialDesign:HintAssist.Hint="To day"
+                        Style="{StaticResource MaterialDesignFloatingHintDatePicker}"
+                        Name="toDayDatePicker"
+                        SelectedDateChanged="toDayDatePicker_SelectedDateChanged">
+            </DatePicker>
+
+            <!--Bộ lọc-->
+            <ComboBox Grid.Column="2"
+                      Grid.Row="1"
+                      Padding="2"
+                      FontSize="15"
+                      Margin="20,0,10,0"
+                      FontStyle="Italic"
+                      BorderThickness="0,0,0,1"
+                      SelectionChanged="ComboFilter_SelectionChanged"
+                      DropDownOpened="ComboFilter_DropDownOpened"
+                      DropDownClosed="ComboFilter_DropDownClosed"
+                      FontFamily="Sitka Subheading"
+                      VerticalAlignment="Bottom"
+                      Name="statusFilterComboBox"
+                      materialDesign:HintAssist.Hint="Order status"
+                      ItemsSource="{Binding LongListToTestComboVirtualization}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Display_Text}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
+            <Grid Grid.Column="4" Grid.Row="1">
+
+                <Grid  VerticalAlignment="Bottom">
+
+                    <TextBox x:Name="searchTextBox"
+                             Height="30"
+                             VerticalAlignment="Bottom"
+                             Margin="3 0 5 0"
+                             FontSize="15"
+                             Padding="20 0 0 0"
+                             FontFamily="Sitka Subheading"
+                             materialDesign:HintAssist.Hint="Search"
+                             VerticalContentAlignment="Center" 
+                             FontStyle="Italic"
+                             SelectionChanged="searchTextBox_SelectionChanged">
+                    </TextBox>
+                    <materialDesign:PackIcon Kind="Search"
+                                             Height="25"
+                                             Width="25" 
+                                             Margin="3 3 0 0"/>
+                </Grid>
+            </Grid>
+
+            <!--Danh sách orders-->
+            <ListView Name="listOrders"
+                      Grid.Row="2" Grid.ColumnSpan="6"
+                      FontFamily="Sitka Subheading"
+                      FontSize="13"
+                      Margin="8,0,0,35"
+                      Foreground="Black"
+                      HorizontalAlignment="Stretch">
+
+                <!--Nếu dài quá thì hiển thị...-->
+                <ListView.Resources>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+                        <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=Text}"/>
+                    </Style>
+                    <Style TargetType="{x:Type ScrollBar}">
+                        <Setter Property="Margin" Value="2,50,0,8" />
+                        <Setter Property="Stylus.IsFlicksEnabled" Value="false" />
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type ScrollBar}">
+                                    <Track IsDirectionReversed="true" Focusable="false">
+                                        <Track.Thumb>
+                                            <Thumb Width="8" Background="Green"/>
+                                        </Track.Thumb>
+                                        <Track.IncreaseRepeatButton>
+                                            <RepeatButton Command="ScrollBar.PageDownCommand" Opacity="0" Focusable="false" />
+                                        </Track.IncreaseRepeatButton>
+                                        <Track.DecreaseRepeatButton>
+                                            <RepeatButton Command="ScrollBar.PageUpCommand" Opacity="0" Focusable="false" />
+                                        </Track.DecreaseRepeatButton>
+                                    </Track>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListView.Resources>
+
+                <!--Thiết kế các cột-->
+                <ListView.View>
+                    <GridView>
+
+                        <!--Cột Tên khách hàng-->
+                        <GridViewColumn Width="200">
+                            <GridViewColumn.HeaderTemplate>
+                                <DataTemplate>
+                                    <Border>
+                                        <Border.Effect>
+                                            <DropShadowEffect Color="White"
+                                                                  Direction="270"
+                                                                  ShadowDepth="1"
+                                                                  BlurRadius="5"/>
+                                        </Border.Effect>
+                                        <Label Content="Company Name"
+                                               Padding="1"
+                                               FontSize="15"
+                                               Foreground="Black"
+                                               FontWeight="Bold"/>
+                                    </Border>
+                                </DataTemplate>
+                            </GridViewColumn.HeaderTemplate>
+
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Fullname,Converter={StaticResource guestConverter}}" TextAlignment="Justify" FontSize="16" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
+                        <!--Cột số điện thoại-->
+                        <GridViewColumn Width="130">
+                            <GridViewColumn.HeaderTemplate>
+                                <DataTemplate>
+                                    <Border>
+                                        <Border.Effect>
+                                            <DropShadowEffect Color="White"
+                                                                  Direction="270"
+                                                                  ShadowDepth="1"
+                                                                  BlurRadius="5"/>
+                                        </Border.Effect>
+                                        <Label Content="Phone"
+                                                   Padding="1"
+                                                   FontSize="15"
+                                                   Foreground="Black"
+                                                   FontWeight="Bold"/>
+                                    </Border>
+                                </DataTemplate>
+                            </GridViewColumn.HeaderTemplate>
+
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Tel}" TextAlignment="Justify" FontSize="16" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
+                        <!--Cột Ngày tạo-->
+                        <GridViewColumn Width="210">
+                            <GridViewColumn.HeaderTemplate>
+                                <DataTemplate>
+                                    <Border>
+                                        <Border.Effect>
+                                            <DropShadowEffect Color="White"
+                                                              Direction="270"
+                                                              ShadowDepth="1"
+                                                              BlurRadius="5"/>
+                                        </Border.Effect>
+                                        <Label Content="Created at"
+                                               Padding="1"
+                                               FontSize="15"
+                                               Foreground="Black"
+                                               FontWeight="Bold"/>
+                                    </Border>
+                                </DataTemplate>
+                            </GridViewColumn.HeaderTemplate>
+
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding CreatedAt}" TextAlignment="Justify" FontSize="16" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
+                        <!--Cột Giá bán-->
+                        <GridViewColumn Width="160">
+                            <GridViewColumn.HeaderTemplate>
+                                <DataTemplate>
+                                    <Border>
+                                        <Border.Effect>
+                                            <DropShadowEffect Color="White"
+                                                                  Direction="270"
+                                                                  ShadowDepth="1"
+                                                                  BlurRadius="5"/>
+                                        </Border.Effect>
+                                        <Label Content="Total (đ)"
+                                                   Padding="1"
+                                                   FontSize="15"
+                                                   Foreground="Black"
+                                                   FontWeight="Bold"/>
+                                    </Border>
+                                </DataTemplate>
+                            </GridViewColumn.HeaderTemplate>
+
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Total, Converter={StaticResource PriceConverter}}" TextAlignment="Justify" FontSize="16" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
+                        <!--Cột tình trạng-->
+                        <GridViewColumn Width="180">
+                            <GridViewColumn.HeaderTemplate>
+                                <DataTemplate>
+                                    <Border>
+                                        <Border.Effect>
+                                            <DropShadowEffect Color="White"
+                                                                  Direction="270"
+                                                                  ShadowDepth="1"
+                                                                  BlurRadius="5"/>
+                                        </Border.Effect>
+                                        <Label Content="Status"
+                                                   Padding="1"
+                                                   FontSize="15"
+                                                   Foreground="Black"
+                                                   FontWeight="Bold"/>
+                                    </Border>
+                                </DataTemplate>
+                            </GridViewColumn.HeaderTemplate>
+
+
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Display_Text}" TextAlignment="Justify" FontSize="16" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
+                        <!--Cột edit-->
+                        <GridViewColumn Width="60">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Border BorderBrush="#00fff0"
+                                            BorderThickness="0.5"
+                                            Background="#00d1ff"
+                                            CornerRadius="25"
+                                            Width="30"
+                                            Height="30"
+                                            MouseUp="editOrderMouseUp_MouseUp">
+                                        <materialDesign:PackIcon Name="editOrderMouseUp"
+                                                                 HorizontalAlignment="Center"
+                                                                 VerticalAlignment="Center"
+                                                                 Kind="Edit" 
+                                                                 Width="20"
+                                                                 Height="20"
+                                                                 Foreground="#f37121"/>
+                                    </Border>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
+                        <!--Cột delete-->
+                        <GridViewColumn Width="60">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Border BorderBrush="#00fff0"
+                                            BorderThickness="0.5"
+                                            Background="#00d1ff"
+                                            CornerRadius="25"
+                                            Width="30"
+                                            Height="30"
+                                            MouseUp="deleteOrderMouseUp_MouseUp">
+                                        <materialDesign:PackIcon Name="deleteOrderMouseUp"
+                                                                 HorizontalAlignment="Center"
+                                                                 VerticalAlignment="Center"
+                                                                 Kind="Close"
+                                                                 Width="20"
+                                                                 Height="20"
+                                                                 Foreground="#ff4646"/>
+
+                                    </Border>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
+                    </GridView>
+                </ListView.View>
+            </ListView>
+
+            <!--Phân trang-->
+            <Grid VerticalAlignment="Bottom" 
+                  Grid.Row="2" Grid.ColumnSpan="5">
+                <StackPanel Orientation="Horizontal" 
+                            HorizontalAlignment="Center">
+                    <!--Trang trước-->
+                    <Button Background="Transparent"
+                            BorderBrush="#303030"
+                            VerticalAlignment="Center"
+                            Height="30" Width="30"
+                            Click="PreviousPaging_Click"
+                            Style="{StaticResource MaterialDesignIconForegroundButton}">
+                        <materialDesign:PackIcon Kind="KeyboardArrowLeft"
+                                                     Height="30"
+                                                     Width="30" />
+                    </Button>
+
+                    <!--Chỉ số trang hiện tại-->
+                    <ComboBox Name="pagingComboBox"
+                              Width="60" Height="25" Padding="2"
+                              FontSize="13" FontWeight="Bold"
+                              BorderThickness="0,0,0,0"
+                              Margin="20 0 20 0"
+                              FontStyle="Italic"
+                              FontFamily="Sitka Subheading"
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Center"
+                              DropDownOpened="ComboFilter_DropDownOpened"
+                              DropDownClosed="ComboFilter_DropDownClosed"
+                              SelectionChanged="pageIndexComboBox_SelectionChanged"
+                              ItemsSource="{Binding LongListToTestComboVirtualization}">
+                    </ComboBox>
+
+                    <!--Trang sau-->
+                    <Button Background="Transparent"
+                            BorderBrush="#303030"
+                            Height="30"
+                            Width="30"
+                            Click="NextPaging_Click"
+                            Style="{StaticResource MaterialDesignIconForegroundButton}">
+                        <materialDesign:PackIcon Kind="KeyboardArrowRight"
+                                                 Height="30"
+                                                 Width="30" />
+                    </Button>
+                </StackPanel>
+            </Grid>
+
+            <!--Details order-->
+            <ListView Grid.Row="3" Grid.ColumnSpan="4" Margin="5 0 5 0"
+                      ItemsSource="{Binding ElementName=listOrders, Path=SelectedItem.Details}">
+                <ListView.View>
+                    <GridView>
+
+                        <!--Cột STT-->
+                        <GridViewColumn
+                        Width="90"
+                        DisplayMemberBinding="{
+                            Binding RelativeSource={RelativeSource FindAncestor,
+                            AncestorType={x:Type ListViewItem}}, 
+                            Converter={StaticResource IndexConverter}}">
+                            <GridViewColumn.HeaderTemplate>
+                                <DataTemplate>
+                                    <Border>
+                                        <Border.Effect>
+                                            <DropShadowEffect Color="White"
+                                                              Direction="270"
+                                                              ShadowDepth="1"
+                                                              BlurRadius="5"/>
+                                        </Border.Effect>
+                                        <Label Content="NO"
+                                               Padding="1"
+                                               FontSize="13"
+                                               Foreground="Black"
+                                               FontWeight="Bold"/>
+                                    </Border>
+                                </DataTemplate>
+                            </GridViewColumn.HeaderTemplate>
+                        </GridViewColumn>
+
+                        <!--Tên sản phẩm-->
+                        <GridViewColumn Width="300">
+                            <GridViewColumn.HeaderTemplate>
+                                <DataTemplate>
+                                    <Border>
+                                        <Border.Effect>
+                                            <DropShadowEffect Color="White"
+                                                              Direction="270"
+                                                              ShadowDepth="1"
+                                                              BlurRadius="5"/>
+                                        </Border.Effect>
+                                        <Label Content="Product name"
+                                               Padding="1"
+                                               FontSize="13"
+                                               Foreground="Black"
+                                               FontWeight="Bold"/>
+                                    </Border>
+                                </DataTemplate>
+                            </GridViewColumn.HeaderTemplate>
+
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Product_Name}" TextAlignment="Justify" 
+                                               FontSize="16" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
+                        <!--giá sản phẩm-->
+                        <GridViewColumn Width="150">
+                            <GridViewColumn.HeaderTemplate>
+                                <DataTemplate>
+                                    <Border>
+                                        <Border.Effect>
+                                            <DropShadowEffect Color="White"
+                                                              Direction="270"
+                                                              ShadowDepth="1"
+                                                              BlurRadius="5"/>
+                                        </Border.Effect>
+                                        <Label Content="Price"
+                                               Padding="1"
+                                               FontSize="13"
+                                               Foreground="Black"
+                                               FontWeight="Bold"/>
+                                    </Border>
+                                </DataTemplate>
+                            </GridViewColumn.HeaderTemplate>
+
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Price,Converter={StaticResource PriceConverter}}" 
+                                               TextAlignment="Justify" FontSize="16" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
+                        <!--Số lượng sản phẩm-->
+                        <GridViewColumn Width="120"
+                                        DisplayMemberBinding="{Binding Quantity}">
+                            <GridViewColumn.HeaderTemplate>
+                                <DataTemplate>
+                                    <Border>
+                                        <Border.Effect>
+                                            <DropShadowEffect Color="White"
+                                                              Direction="270"
+                                                              ShadowDepth="1"
+                                                              BlurRadius="5"/>
+                                        </Border.Effect>
+                                        <Label Content="Amount"
+                                               Padding="1"
+                                               FontSize="13"
+                                               Foreground="Black"
+                                               FontWeight="Bold"/>
+                                    </Border>
+                                </DataTemplate>
+                            </GridViewColumn.HeaderTemplate>
+
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Quantity}" TextAlignment="Center" FontSize="16" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
+                        <!--Tổng tiền của sản phẩm-->
+                        <GridViewColumn Width="150">
+                            <GridViewColumn.HeaderTemplate>
+                                <DataTemplate>
+                                    <Border>
+                                        <Border.Effect>
+                                            <DropShadowEffect Color="White"
+                                                              Direction="270"
+                                                              ShadowDepth="1"
+                                                              BlurRadius="5"/>
+                                        </Border.Effect>
+                                        <Label Content="Total"
+                                               Padding="1"
+                                               FontSize="13"
+                                               Foreground="Black"
+                                               FontWeight="Bold"/>
+                                    </Border>
+                                </DataTemplate>
+                            </GridViewColumn.HeaderTemplate>
+
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Total, Converter={StaticResource PriceConverter}}" TextAlignment="Justify" FontSize="16" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+
+        </Grid>
+    </Grid>
+</UserControl>

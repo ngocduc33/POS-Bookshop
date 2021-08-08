@@ -1,0 +1,133 @@
+﻿<UserControl x:Class="MyShop.ReportScreen"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+             xmlns:converter="clr-namespace:MyShop"
+             xmlns:local="clr-namespace:MyShop"
+             mc:Ignorable="d" 
+             d:DesignHeight="720" d:DesignWidth="1100" Loaded="UserControl_Loaded">
+    <UserControl.Resources>
+        <converter:PriceConverter x:Key="PriceConverter"/>
+    </UserControl.Resources>
+    <Grid  Name="reportScreen">
+        <Grid Background="#FFFAFAFA">
+            <Grid.RowDefinitions>
+
+                <!--Title-->
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="50"/>
+                <!--Body-->
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <lvc:PieChart Grid.Row="2" Width="1050" Name="reportChart" Margin="25,65,25,40"/>
+
+            <Label Grid.Row="0"
+                       Content="BUSINESS SITUATION REPORT" 
+                       FontFamily="Sitka Subheading"
+                       FontSize="30"
+                       Padding="0"
+                       FontWeight="Bold"
+                       VerticalAlignment="Top"
+                       HorizontalAlignment="Center" 
+                   />
+
+            <Button 
+                Grid.Row="0"
+                x:Name="MasterDataReport"
+                    Grid.RowSpan="1"
+                    Height="30"
+                    Foreground="White"
+                    HorizontalAlignment="Right"
+                    
+                    Background="#5ea7ff"
+                    BorderBrush="#187cf5"
+                    Click="MasterDataReport_Click"
+                    Style="{StaticResource MaterialDesignRaisedButton}" Margin="0,10,18,10">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="MasterData Situation" 
+                               FontSize="14"
+                               FontFamily="Sitka Subheading" 
+                               FontStyle="Italic"
+                               Margin="10 0 0 0"/>
+                </StackPanel>
+            </Button>
+
+            <Button 
+                Grid.Row="1"
+                x:Name="BestSeller"
+                    Grid.RowSpan="1"
+                    Height="30"
+                    Foreground="White"
+                    HorizontalAlignment="Right"
+                    
+                    Background="#5ea7ff"
+                    BorderBrush="#187cf5"
+                    Click="BestSeller_Click"
+                    Style="{StaticResource MaterialDesignRaisedButton}" Margin="0,10,18,10">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="BestSeller" 
+                               FontSize="14"
+                               FontFamily="Sitka Subheading" 
+                               FontStyle="Italic"
+                               Margin="10 0 0 0"/>
+                </StackPanel>
+            </Button>
+
+            <Button 
+                        Grid.Row="0"
+                        HorizontalAlignment="Left"
+                        Background="Transparent"
+                        BorderBrush="#303030"
+                        VerticalAlignment="Top"
+                        Height="30" Width="30"
+                        Click="backWard_Click"
+                        Style="{StaticResource MaterialDesignIconForegroundButton}"
+                        Margin="10 5 0 0">
+                <materialDesign:PackIcon Kind="KeyboardArrowLeft"
+                                                 Height="30"
+                                                 Width="30" />
+            </Button>
+
+            <!--Từ ngày-->
+            <DatePicker 
+                SelectedDate="12/27/2020"
+                Grid.Row="1" 
+                        Width="300"
+                        HorizontalAlignment="Left"                        
+                        VerticalAlignment="Bottom"
+                        Margin="10 0 10 0"
+                        FontSize="15"
+                        FontFamily="Sitka Subheading"
+                        FontWeight="Bold"
+                        materialDesign:HintAssist.Hint="From date"
+                        Style="{StaticResource MaterialDesignFloatingHintDatePicker}"
+                        Name="fromDayDatePicker"
+                        SelectedDateChanged="fromDayDatePicker_SelectedDateChanged">
+            </DatePicker>
+
+            <!--Đến ngày-->
+            <DatePicker
+                SelectedDate="01/05/2021"
+                IsTodayHighlighted="True"
+                Grid.Row="1"
+                Width="300"
+                VerticalAlignment="Bottom"
+                Margin="315,0,379,0"
+                FontSize="15"
+                FontFamily="Sitka Subheading"
+                FontWeight="Bold"
+                materialDesign:HintAssist.Hint="To date"
+                Style="{StaticResource MaterialDesignFloatingHintDatePicker}"
+                Name="toDayDatePicker"
+                SelectedDateChanged="toDayDatePicker_SelectedDateChanged">
+            </DatePicker>
+
+        </Grid>
+
+    </Grid>
+
+</UserControl>

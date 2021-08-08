@@ -1,0 +1,158 @@
+﻿<UserControl x:Class="MyShop.Report.bestseller"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+             xmlns:converter="clr-namespace:MyShop"
+             xmlns:local="clr-namespace:MyShop"
+             mc:Ignorable="d" 
+             d:DesignHeight="720" d:DesignWidth="1100" Loaded="UserControl_Loaded">
+    <UserControl.Resources>
+        <converter:ByteArrayToImageConverter x:Key="converter"/>
+        <converter:PriceConverter x:Key="priceConverter"/>
+
+        <!--Tăng kích thước item-->
+        <Style x:Key="iconStyle" TargetType="Border">
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Grid.ZIndex" Value="1"/>
+                    <Setter Property="TextBlock.Background" Value="#66000000"/>
+                    <Setter Property="RenderTransform">
+                        <Setter.Value>
+                            <ScaleTransform ScaleX="1.05" ScaleY="1.05" />
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="Grid.Effect">
+                        <Setter.Value>
+                            <DropShadowEffect BlurRadius="15" ShadowDepth="2" Direction="-90" Color="Silver" Opacity="10"/>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+
+        <Style x:Key="ScaleStyle" TargetType="Grid">
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Grid.ZIndex" Value="1"/>
+                    <Setter Property="TextBlock.Background" Value="#66000000"/>
+                    <Setter Property="RenderTransform">
+                        <Setter.Value>
+                            <ScaleTransform ScaleX="1.05" ScaleY="1.05" />
+                        </Setter.Value>
+                    </Setter>
+                    <!--<Setter Property="Grid.Effect">
+                        <Setter.Value>
+                            <DropShadowEffect BlurRadius="20" ShadowDepth="2" Direction="-90" Color="#66000000" Opacity="1"/>
+                        </Setter.Value>
+                    </Setter>-->
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+    <Grid Name="bestsellerData">
+        <Grid Background="#FFFAFAFA">
+            <Grid.RowDefinitions>
+
+                <!--Title-->
+                <RowDefinition Height="50"/>
+                <!--Body-->
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+
+            <Label Grid.Row="0"
+                       Content="TOP 7 BEST SELLER" 
+                       FontFamily="Sitka Subheading"
+                       FontSize="30"
+                       Padding="0"
+                       FontWeight="Bold"
+                       VerticalAlignment="Top"
+                       HorizontalAlignment="Center" 
+                   />
+            <Button 
+                        Grid.Row="0"
+                        HorizontalAlignment="Left"
+                        Background="Transparent"
+                        BorderBrush="#303030"
+                        VerticalAlignment="Top"
+                        Height="30" Width="30"
+                        Click="backWard_Click"
+                        Style="{StaticResource MaterialDesignIconForegroundButton}"
+                        Margin="10 5 0 0">
+                <materialDesign:PackIcon Kind="KeyboardArrowLeft"
+                                                 Height="30"
+                                                 Width="30" />
+            </Button>
+
+            <Grid Grid.Row="1" >
+                <ListView Name="productsListView" 
+                                      ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
+                                      ScrollViewer.VerticalScrollBarVisibility="Disabled" 
+                                      >
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Columns="5" Rows="2">
+                            </UniformGrid>
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Background="White" RenderTransformOrigin="0.5,0.5" 
+                                              Style="{StaticResource ScaleStyle}" 
+                                              VerticalAlignment="Stretch"
+                                              HorizontalAlignment="Stretch">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="7*"/>
+                                    <RowDefinition Height="0.7*"/>
+                                    <RowDefinition Height="0.63*"/>
+                                    <RowDefinition Height="0.63*"/>
+                                </Grid.RowDefinitions>
+                                <Image Source="{Binding Thumbnail, 
+                                                    Converter={StaticResource converter}, Mode=OneTime}"
+                                                       RenderOptions.BitmapScalingMode="HighQuality"
+                                                       Stretch="Uniform"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"
+                                                   Grid.Row="0"
+                                                   Margin="0 0 0 1"
+                                                   />
+                                <TextBlock Text="{Binding ProductName, Mode=OneTime}" 
+                                                           Margin="6 0 0 1"
+                                                           TextAlignment="Left"
+                                                           TextTrimming="CharacterEllipsis" 
+                                                           FontSize="14"
+                                                           FontFamily="Times New Roman" 
+                                                           Grid.Row="1"
+                                                           HorizontalAlignment="Center"/>
+                                <TextBlock Text="{Binding Price, Converter={StaticResource priceConverter}}" 
+                                                       Margin="6 0 0 0" 
+                                                       TextAlignment="Left"
+                                                       TextTrimming="CharacterEllipsis" 
+                                                       FontSize="17" FontWeight="Bold"
+                                                       FontFamily="Sitka Subheading"
+                                                       Grid.Row="2"
+                                                       HorizontalAlignment="Center"/>
+                                <TextBlock 
+                                                       Text="{Binding Count, Mode=OneTime}"
+                                                       Margin="6 0 0 0" 
+                                                       TextAlignment="Left"
+                                                       TextTrimming="CharacterEllipsis" 
+                                                       FontSize="17" FontWeight="Bold"
+                                                       FontFamily="Sitka Subheading"
+                                                       Grid.Row="3"
+                                                       HorizontalAlignment="Center"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </Grid>
+
+
+        </Grid>
+            
+    </Grid>
+</UserControl>

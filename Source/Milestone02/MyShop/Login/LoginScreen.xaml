@@ -1,0 +1,224 @@
+﻿<Window x:Class="MyShop.LoginScreen"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:local="clr-namespace:MyShop"
+        mc:Ignorable="d"
+        Title="Login"
+        Height="480" Width="500" 
+        WindowStyle="None"  
+        WindowStartupLocation="CenterScreen"
+        AllowsTransparency="True"
+        Background="Transparent"
+        
+        Loaded="Window_Loaded">
+
+    <!--Style button-->
+    <Window.Resources>
+        <SolidColorBrush x:Key="Fluent.Ribbon.Brushes.WindowCommands.CaptionButton.Foreground" Color="White"/>
+        <Style x:Key="EllipseButton" TargetType="Button">
+            <Setter Property="OverridesDefaultStyle" Value="True" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Name="border" BorderThickness="0" BorderBrush="White" Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Opacity" Value="0.8" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+
+    <Border CornerRadius="8" Background="#FFFAFAFA" >
+        <Grid>
+            <Grid.RowDefinitions>
+
+                <RowDefinition Height="6*"/>
+
+                <!--user-->
+                <RowDefinition Height="1.2*"/>
+
+                <!--Password-->
+                <RowDefinition Height="1.2*"/>
+
+                <!--button đăng nhập-->
+                <RowDefinition Height="2.5*"/>
+            </Grid.RowDefinitions>
+
+            <!--Action Bar-->
+            <materialDesign:ColorZone
+                MouseDown="ColorZone_MouseDown"
+                Padding="5"
+                Background="#5ea7ff"
+                CornerRadius="8"
+                materialDesign:ShadowAssist.ShadowDepth="Depth2">
+                <!--Mode="Light"-->
+                <Grid Height="30">
+                    <!--Tiêu đề-->
+                    <TextBlock Name="txtTitle"
+                               Text="Login"
+                               FontSize="20"
+                               FontFamily="Sitka Subheading"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"/>
+                    <!--Bộ ba button minimize, maximize và close-->
+                    <Button Click="btnCommands_Click"
+                            Tag="btnClose"
+                            Height="25" Width="25"
+                            BorderBrush="OrangeRed"
+                            Opacity="0.8"
+                            Background="#FFF6713F"
+                            HorizontalAlignment="Right"
+                            Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}">
+                        <materialDesign:PackIcon Kind="Power"
+                                                 Height="15"
+                                                 Width="15"/>
+                    </Button>
+                    <Button Click="btnCommands_Click"
+                            Tag="btnMaxim"
+                            Margin="0,0,30,0"
+                            Height="25" Width="25" Opacity="0.8"
+                            HorizontalAlignment="Right"
+                            Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
+                            Background="#5ea7ff"
+                            BorderBrush="#187cf5">
+                        <materialDesign:PackIcon Kind="WindowMaximize"
+                                                 Height="15"
+                                                 Width="15"/>
+                    </Button>
+                    <Button Click="btnCommands_Click"
+                            Tag="btnMinim"
+                            Margin="0,0,60,0"
+                            Height="25" Width="25" Opacity="0.8"
+                            HorizontalAlignment="Right"
+                            Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
+                            Background="#5ea7ff"
+                            BorderBrush="#187cf5">
+                        <materialDesign:PackIcon Kind="WindowMinimize" 
+                                                 Height="15"
+                                                 Width="15"/>
+                    </Button>
+                </Grid>
+            </materialDesign:ColorZone>
+
+            <Grid Grid.Row="0" Margin="0 30 0 0" >
+                <Image Source="../Images/Login/responsive.png" Width="200" Height="200"/>
+            </Grid>
+
+            <Grid Grid.Row="1">
+                <!--AvartarUser-->
+                <Image Source="../Images/Login/User.png"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Top"
+                       Width="30"
+                       Height="30"
+                       Margin="80,10,0,0"/>
+
+                <!--Textbox nhập tên-->
+                <TextBox Name="tbUser"
+                         Height="30"
+                         FontSize="17"
+                         FontFamily="Sitka Subheading"
+                         Background="Transparent"
+                         Margin="130,0,100,0"
+                         BorderThickness="0,0,0,0.25"
+                         VerticalContentAlignment="Center" 
+                         KeyDown="textBox_KeyDown"
+                         materialDesign:HintAssist.Hint="User"
+                         Padding="1 -7.5 0 -3"
+                         IsEnabled="True"
+                         materialDesign:HintAssist.FloatingScale=".85"  
+                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>
+            </Grid>
+            <Grid Grid.Row="2">
+                <!--Avartar Pass-->
+                <Image Source="../Images/Login/Pass.png"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Width="30"
+                        Height="30"
+                        Margin="80,11,0,0"/>
+
+                <!--Textbox mật khẩu-->
+                <PasswordBox Name="tbPass"
+                             Height="30"
+                             FontSize="16"
+                             FontFamily="Sitka Subheading"
+                             Background="Transparent"
+                             Margin="130,0,100,0"
+                             BorderThickness="0,0,0,0.25"
+                             KeyDown="textBox_KeyDown"
+                             materialDesign:HintAssist.Hint="Password"
+                             Padding="1 -6 0 -3"
+                             materialDesign:HintAssist.FloatingScale=".85"  
+                             Style="{StaticResource MaterialDesignFloatingHintPasswordBox}"/>
+
+                
+            </Grid>
+
+            <Grid Grid.Row="3">
+                <!--Button đăng nhập-->
+                <Button Grid.Row="3"
+                        Name="btnLogin"
+                        FontSize="15"
+                        FontFamily="Sitka Subheading"
+                        Width="200"
+                        Height="35"
+                        Content="Login"
+                        Margin="0,40,0,0"
+                        VerticalAlignment="Top"
+                        Background="#5ea7ff"
+                        Style="{StaticResource EllipseButton}"
+                        Click="btnLogin_Click">
+                    <!--Làm tròn cạnh button-->
+                    <Button.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius" Value="20"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+
+                
+
+                <!--Version-->
+                <Label Name="version" 
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Bottom"
+                       FontStyle="Italic" 
+                       FontFamily="Times New Roman" 
+                       FontSize="15"
+                       Margin="0 0 0 5"/>
+
+
+                <!--Setting-->
+                <Button x:Name="btnSetting"
+                        HorizontalAlignment="Right" 
+                        VerticalAlignment="Bottom" 
+                        Margin="0 0 7 7"
+                        Background="#5ea7ff"
+                        Click="btnSetting_Click"
+                        Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}">
+                    <materialDesign:PackIcon Kind="Settings"
+                                             Width="25" Height="25">
+                        <materialDesign:PackIcon.Foreground>
+                            <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
+                                <GradientStop Color="#FFAD5037" Offset="0"/>
+                                <GradientStop Color="#FFFC834A" Offset="1"/>
+                            </LinearGradientBrush>
+                        </materialDesign:PackIcon.Foreground>
+                    </materialDesign:PackIcon>
+                </Button>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>
